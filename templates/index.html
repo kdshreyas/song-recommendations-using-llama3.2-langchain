@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Recommender</title>
+    <style>
+        /* Style the loading message */
+        #loading {
+            display: none;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Song Recommender</h1>
+    <input type="text" id="songInput" placeholder="Enter a song name...">
+    <button onclick="getRecommendations()">Get Recommendations</button>
+
+    <h2>Recommended Playlist</h2>
+    <!-- Loading message -->
+    <div id="loading">Loading...</div>
+    <!-- Result display -->
+    <div id="playlistResult"></div>
+
+    <script>
+        async function getRecommendations() {
+            const song = document.getElementById('songInput').value;
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('playlistResult');
+
+            // Show loading message and clear any previous result
+            loading.style.display = 'block';
+            result.innerText = '';
+
+            try {
+                const response = await fetch('/recommend', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ song })
+                });
+                const data = await response.json();
+                // Hide loading message and show result
+                loading.style.display = 'none';
+                result.innerText = data.playlist;
+            } catch (error) {
+                // Hide loading message if there's an error
+                loading.style.display = 'none';
+                result.innerText = 'An error occurred while fetching recommendations.';
+            }
+        }
+    </script>
+</body>
+</html>
